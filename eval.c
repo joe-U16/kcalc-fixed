@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -54,7 +55,7 @@ int main(int argc, char *argv[])
     } else {
         double test = strtod(argv[2], NULL);
 
-        if (result != test)
+        if (fabs(result - test) > 0.01)
             printf("FAIL: %lf != %lf\n", result, test);
         else
             printf("OK: %lf == %lf\n", result, test);

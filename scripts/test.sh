@@ -71,6 +71,10 @@ test_op '$(number, 1), $(number, 2+3), number()' '5' # should be 5
 # pre-defined function
 test_op 'nop()'
 
+# new test case
+test_op '500000000000.4' '500000000000.4'
+test_op '444444.32768' '444444.32768'
+
 sudo rmmod calc
 
 # epilogue

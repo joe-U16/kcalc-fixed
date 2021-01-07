@@ -31,3 +31,11 @@ eval
 
 # test-oriented
 mathex/build/
+
+# test file
+test.c
+test
+a.c
+a
+
+
