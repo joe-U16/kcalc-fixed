@@ -10,6 +10,7 @@
 
 #include <linux/string.h> /* for memset() and memcpy() */
 #include "expression.h"
+#include "fixed-point.h"
 
 MODULE_LICENSE("Dual MIT/GPL");
 MODULE_AUTHOR("National Cheng Kung University, Taiwan");
@@ -118,10 +119,57 @@ noinline uint64_t user_func_nop(struct expr_func *f, vec_expr_t args, void *c)
     return 0;
 }
 
+noinline uint64_t user_func_add(struct expr_func *f, vec_expr_t args, void *c)
+{
+    uint64_t a = expr_eval(&args.buf[0]);
+    uint64_t b = expr_eval(&args.buf[1]);
+
+    return a + b;
+}
+
+
+noinline uint64_t user_func_sqrt(struct expr_func *f, vec_expr_t args, void *c)
+{
+    return 0;
+}
+
 static struct expr_func user_funcs[] = {
     {"nop", user_func_nop, user_func_nop_cleanup, 0},
+    {"sqrt", user_func_sqrt, user_func_nop_cleanup, 0},
+    {"add", user_func_add, user_func_nop_cleanup, 0},
     {NULL, NULL, NULL, 0},
 };
+
+
+// uint64_t sqrt(uint64_t x)
+// {
+//     _uint l = 0;
+//     int h = 65535;  // 2^16 - 1 = 65535
+//     unsigned int m = h;
+
+//     while (l < h) {
+//         m = (l + h + 1) / 2;
+
+//         if (m * m == x) {
+//             return m;
+//         } else if (m * m > x) {
+//             h = m - 1;
+//         } else {
+//             l = m;
+//         }
+//     }
+//     return h;
+// }
+
+// noinline uint64_t user_func_sqrt(struct expr_func *f, vec_expr_t args,
+// void *c)
+// {
+//     uint64_t ix0 = expr_eval(&vec_nth(&args, 0));
+
+//     if (ix0 == 0 || ix0 == NAN_INT || ix0 == INF_INT)
+//         return ix0;
+// }
+
 
 static void calc(void)
 {

@@ -10,10 +10,6 @@ int main(int argc, char *argv[])
     if (argc < 2)
         return -1;
 
-    // if (argv[2] == NULL) {
-    //     argv[2] = "no";
-    // }
-
     fixedp ipt = {0};
     ipt.data = strtoul(argv[1], NULL, 10);
     char k_result[8];

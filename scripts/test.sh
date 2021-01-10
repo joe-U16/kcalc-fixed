@@ -75,6 +75,22 @@ test_op 'nop()'
 test_op '500000000000.4' '500000000000.4'
 test_op '444444.32768' '444444.32768'
 
+# sqrt
+test_op 'sqrt(-1)'
+test_op 'sqrt(0)'
+test_op 'sqrt(1)'
+test_op 'sqrt(2)'
+test_op 'sqrt(3)'
+test_op 'sqrt(4)'
+test_op 'sqrt(2147483647)'
+test_op 'sqrt(2147483647 + (1 - (1 >> 32)))'
+test_op 'sqrt(1/0)'
+test_op 'sqrt(0/0)'
+
+# add
+test_op 'add(1,2)'
+test_op 'add(3,4)'  
+
 sudo rmmod calc
 
 # epilogue
