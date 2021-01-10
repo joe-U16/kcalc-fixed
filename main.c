@@ -127,10 +127,38 @@ noinline uint64_t user_func_add(struct expr_func *f, vec_expr_t args, void *c)
     return a + b;
 }
 
+// uint64_t sqrt(uint64_t x)
+// {
+//     _uint l = 0;
+//     int h = 65535;  // 2^16 - 1 = 65535
+//     unsigned int m = h;
+
+//     while (l < h) {
+//         m = (l + h + 1) / 2;
+
+//         if (m * m == x) {
+//             return m;
+//         } else if (m * m > x) {
+//             h = m - 1;
+//         } else {
+//             l = m;
+//         }
+//     }
+//     return h;
+// }
 
 noinline uint64_t user_func_sqrt(struct expr_func *f, vec_expr_t args, void *c)
 {
-    return 0;
+    int64_t num = expr_eval(&args.buf[0]);
+    if (num < 0)
+        return NAN_INT;
+
+    if (num == NAN_INT || num == INF_INT)
+        return num;
+
+
+
+    return num;
 }
 
 
@@ -177,34 +205,6 @@ static struct expr_func user_funcs[] = {
     {NULL, NULL, NULL, 0},
 };
 
-// uint64_t sqrt(uint64_t x)
-// {
-//     _uint l = 0;
-//     int h = 65535;  // 2^16 - 1 = 65535
-//     unsigned int m = h;
-
-//     while (l < h) {
-//         m = (l + h + 1) / 2;
-
-//         if (m * m == x) {
-//             return m;
-//         } else if (m * m > x) {
-//             h = m - 1;
-//         } else {
-//             l = m;
-//         }
-//     }
-//     return h;
-// }
-
-// noinline uint64_t user_func_sqrt(struct expr_func *f, vec_expr_t args,
-// void *c)
-// {
-//     uint64_t ix0 = expr_eval(&vec_nth(&args, 0));
-
-//     if (ix0 == 0 || ix0 == NAN_INT || ix0 == INF_INT)
-//         return ix0;
-// }
 
 
 static void calc(void)
