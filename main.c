@@ -133,13 +133,49 @@ noinline uint64_t user_func_sqrt(struct expr_func *f, vec_expr_t args, void *c)
     return 0;
 }
 
+
+noinline uint64_t user_func_sigma(struct expr_func *f, vec_expr_t args, void *c)
+{
+    int64_t lower = expr_eval(&vec_nth(&args, 2));
+    int64_t upper = expr_eval(&vec_nth(&args, 3));
+
+    /* return if bad function call */
+    if (args.len != 4)
+        return NAN_INT;
+
+    if (lower > upper)
+        return NAN_INT;
+
+    uint64_t sum = 0;
+    int64_t *i = (int64_t *) args.buf[0].param.var.value;
+    int max_iter = INT_MAX;
+    for (*i = lower; *i <= upper && max_iter >= 0;
+         *i += (1LL << 32), max_iter--) {
+        uint64_t tmp = expr_eval(&args.buf[1]);
+        if (tmp == NAN_INT || tmp == INF_INT)
+            return tmp;
+
+        uint64_t new_sum;
+        if (__builtin_add_overflow(sum, tmp, &new_sum)) {
+            pr_info("calc: sigma, overflow occur\n");
+            return INF_INT;
+        }
+        sum = new_sum;
+    }
+
+    if (max_iter <= 0)
+        return NAN_INT;
+
+    return sum;
+}
+
 static struct expr_func user_funcs[] = {
     {"nop", user_func_nop, user_func_nop_cleanup, 0},
     {"sqrt", user_func_sqrt, user_func_nop_cleanup, 0},
+    {"sigma", user_func_sigma, user_func_nop_cleanup, 0},
     {"add", user_func_add, user_func_nop_cleanup, 0},
     {NULL, NULL, NULL, 0},
 };
-
 
 // uint64_t sqrt(uint64_t x)
 // {

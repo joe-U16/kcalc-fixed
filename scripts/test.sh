@@ -88,8 +88,16 @@ test_op 'sqrt(1/0)'
 test_op 'sqrt(0/0)'
 
 # add
-test_op 'add(1,2)'
-test_op 'add(3,4)'  
+test_op 'add(1,2)' '3'
+test_op 'add(3,4)' '7'
+test_op 'NAN_INT' 'NAN_INT'
+
+# sigma
+test_op 'sigma(n, n*3, 3, 12)'
+test_op 'sigma(n, 1, 1, 12)'
+test_op 'sigma(i, 111, 1, 4)'
+test_op 'sigma(i, i<=5, 1,10)'
+test_op '1<2'
 
 sudo rmmod calc
 
