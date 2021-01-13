@@ -127,45 +127,49 @@ noinline uint64_t user_func_add(struct expr_func *f, vec_expr_t args, void *c)
     return a + b;
 }
 
-// uint64_t sqrt(uint64_t x)
+// noinline uint64_t user_func_sqrt(struct expr_func *f, vec_expr_t args, void
+// *c)
 // {
-//     _uint l = 0;
-//     int h = 65535;  // 2^16 - 1 = 65535
-//     unsigned int m = h;
+//     int64_t num = expr_eval(&args.buf[0]);
+//     if (num < 0)
+//         return NAN_INT;
 
-//     while (l < h) {
-//         m = (l + h + 1) / 2;
+//     if (num == NAN_INT || num == INF_INT)
+//         return num;
 
-//         if (m * m == x) {
-//             return m;
-//         } else if (m * m > x) {
-//             h = m - 1;
-//         } else {
-//             l = m;
+//     uint64_t sqrt(uint64_t x)
+//     {
+//         _uint l = 0;
+//         int h = 65535;  // 2^16 - 1 = 65535
+//         unsigned int m = h;
+
+//         while (l < h) {
+//             m = (l + h + 1) / 2;
+
+//             if (m * m == x) {
+//                 return m;
+//             } else if (m * m > x) {
+//                 h = m - 1;
+//             } else {
+//                 l = m;
+//             }
 //         }
+//         return h;
 //     }
-//     return h;
+
+//     return num;
 // }
+
 
 noinline uint64_t user_func_sqrt(struct expr_func *f, vec_expr_t args, void *c)
 {
-    int64_t num = expr_eval(&args.buf[0]);
-    if (num < 0)
-        return NAN_INT;
-
-    if (num == NAN_INT || num == INF_INT)
-        return num;
-
-
-
-    return num;
+    return 0;
 }
-
 
 noinline uint64_t user_func_sigma(struct expr_func *f, vec_expr_t args, void *c)
 {
-    int64_t lower = expr_eval(&vec_nth(&args, 2));
-    int64_t upper = expr_eval(&vec_nth(&args, 3));
+    int64_t lower = expr_eval(&args.buf[2]);
+    int64_t upper = expr_eval(&args.buf[3]);
 
     /* return if bad function call */
     if (args.len != 4)
@@ -197,15 +201,23 @@ noinline uint64_t user_func_sigma(struct expr_func *f, vec_expr_t args, void *c)
     return sum;
 }
 
+noinline uint64_t user_func_pi(struct expr_func *f, vec_expr_t args, void *c)
+{
+    const char *s = "3.14";
+
+
+    uint64_t pi = expr_eval(e);
+    return pi;
+}
+
 static struct expr_func user_funcs[] = {
+    {"pi", user_func_pi, user_func_nop_cleanup, 0},
     {"nop", user_func_nop, user_func_nop_cleanup, 0},
     {"sqrt", user_func_sqrt, user_func_nop_cleanup, 0},
     {"sigma", user_func_sigma, user_func_nop_cleanup, 0},
     {"add", user_func_add, user_func_nop_cleanup, 0},
     {NULL, NULL, NULL, 0},
 };
-
-
 
 static void calc(void)
 {
