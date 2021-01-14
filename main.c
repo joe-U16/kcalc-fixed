@@ -127,43 +127,52 @@ noinline uint64_t user_func_add(struct expr_func *f, vec_expr_t args, void *c)
     return a + b;
 }
 
-// noinline uint64_t user_func_sqrt(struct expr_func *f, vec_expr_t args, void
-// *c)
-// {
-//     int64_t num = expr_eval(&args.buf[0]);
-//     if (num < 0)
-//         return NAN_INT;
-
-//     if (num == NAN_INT || num == INF_INT)
-//         return num;
-
-//     uint64_t sqrt(uint64_t x)
-//     {
-//         _uint l = 0;
-//         int h = 65535;  // 2^16 - 1 = 65535
-//         unsigned int m = h;
-
-//         while (l < h) {
-//             m = (l + h + 1) / 2;
-
-//             if (m * m == x) {
-//                 return m;
-//             } else if (m * m > x) {
-//                 h = m - 1;
-//             } else {
-//                 l = m;
-//             }
-//         }
-//         return h;
-//     }
-
-//     return num;
-// }
-
-
 noinline uint64_t user_func_sqrt(struct expr_func *f, vec_expr_t args, void *c)
 {
-    return 0;
+    int64_t ix0 = expr_eval(&vec_nth(&args, 0));
+
+    /* for 0 or NAN or INF, just return itself*/
+    if (ix0 == 0 || ix0 == NAN_INT || ix0 == INF_INT)
+        return ix0;
+
+    /* first, scale our number between 1 to 4 */
+    int lz = __builtin_clzll(ix0);
+    /* for negative number */
+    if (lz == 0)
+        return NAN_INT;
+
+    /* for range from 0 to 30 */
+    if (lz <= 30) {
+        if (lz & 1)
+            lz++;
+        ix0 >>= (30 - lz);
+    }
+    /* for range from 31 to 63 */
+    else {
+        if (!(lz & 1))
+            lz++;
+        ix0 <<= (lz - 31);
+    }
+
+    int64_t s0, q, t, r;
+    /* generate sqrt(x) bit by bit */
+    q = s0 = 0;      /* [q] = sqrt(x) */
+    r = 0x400000000; /* r = moving bit from right to left */
+
+    while (r != 0) {
+        t = s0 + r;      // t = s_i + 2^(-(i+1))
+        if (t <= ix0) {  // t <= y_i ?
+            s0 = t + r;  // s_{i+1} = s_i + 2^(-i)
+            ix0 -= t;    // y_{i+1} = yi - t
+            q += r;      // q_{i+1} = q_{i}+ 2^(-i-1)
+        }
+        ix0 += ix0;
+        r >>= 1;
+    }
+    if (lz < 31)
+        return (q >> 1) << ((30 - lz) >> 1);
+
+    return (q >> 1) >> ((lz - 31) >> 1);
 }
 
 noinline uint64_t user_func_sigma(struct expr_func *f, vec_expr_t args, void *c)
@@ -203,11 +212,9 @@ noinline uint64_t user_func_sigma(struct expr_func *f, vec_expr_t args, void *c)
 
 noinline uint64_t user_func_pi(struct expr_func *f, vec_expr_t args, void *c)
 {
-    const char *s = "3.14";
-
-
-    uint64_t pi = expr_eval(e);
-    return pi;
+    // const char *s = "3.14";
+    // uint64_t pi = expr_eval(e);
+    return 0;
 }
 
 static struct expr_func user_funcs[] = {

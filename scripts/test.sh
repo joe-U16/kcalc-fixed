@@ -77,9 +77,17 @@ test_op '444444.32768' '444444.32768'
 
 # sqrt
 test_op 'sqrt(2147483647)'
-test_op 'sqrt(2147483647 + (1 - (1 >> 32)))'
-test_op 'sqrt(1/0)'
 test_op 'sqrt(0/0)'
+test_op 'sqrt(0)'
+test_op 'sqrt(10)' '3.162278' 
+test_op 'sqrt(20)' '4.472136' 
+test_op 'sqrt(30)' '5.477226'
+test_op 'sqrt(40)' '6.324555'
+test_op 'sqrt(50)' '7.071068'
+test_op 'sqrt(60)' '7.745967'
+test_op 'sqrt(70)' '8.366600'
+test_op 'sqrt(80)' '8.944272'
+test_op 'sqrt(90)' '9.486833'
 
 # add
 test_op 'add(1,2)' '3'
@@ -88,9 +96,10 @@ test_op 'add(3.14, 2.11)' '5.25'
 test_op 'NAN_INT' 'NAN_INT'
 
 # sigma
-test_op 'sigma(n, n*3, 3, 12)'
-test_op 'sigma(n, 1, 1, 12)'
-test_op 'sigma(i, 111, 1, 4)'
+test_op 'sigma(n, n*3, 1, 10)' '165'
+test_op 'sigma(n, n, 1, 10)' '55'
+test_op 'sigma(i, i**2, 1, 10)' '385'
+
 
 sudo rmmod calc
 
