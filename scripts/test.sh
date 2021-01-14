@@ -88,6 +88,15 @@ test_op 'sqrt(60)' '7.745967'
 test_op 'sqrt(70)' '8.366600'
 test_op 'sqrt(80)' '8.944272'
 test_op 'sqrt(90)' '9.486833'
+test_op 'INT_MAX=2147483647, sqrt(INT_MAX+0.5)'
+test_op 'INT_MAX=2147483647, sqrt(INT_MAX+0.25)'
+test_op 'INT_MAX=2147483647, sqrt(INT_MAX+0.125)'
+test_op 'INT_MAX=2147483647, sqrt(INT_MAX+0.0625)'
+test_op 'INT_MAX=2147483647, sqrt(INT_MAX+0.03125)'
+test_op 'INT_MAX=2147483647, sqrt(INT_MAX+0.0625)'
+test_op 'sqrt(2)'
+
+
 
 # add
 test_op 'add(1,2)' '3'
@@ -99,8 +108,19 @@ test_op 'NAN_INT' 'NAN_INT'
 test_op 'sigma(n, n*3, 1, 10)' '165'
 test_op 'sigma(n, n, 1, 10)' '55'
 test_op 'sigma(i, i**2, 1, 10)' '385'
+test_op 'INT_MAX=2147483647, sigma(n, n, 1, INT_MAX)'
+test_op 'sigma(n, n, 1, 2)'
+test_op 'sigma(m, n, 2, 1)' 'NAN_INT'
 
 
+# NAN_INT and NAN_INF
+test_op 'a=2147483647, a+1' 'INF_INT'
+
+test_op 'NAN_INT' 'NAN_INT'
+test_op 'INF_INT' 'NTN_INT'
+test_op '1' 'NAN_INT'
+test_op 'INF_INT' 'INF_INT'
+ 
 sudo rmmod calc
 
 # epilogue
